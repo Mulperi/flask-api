@@ -1,5 +1,6 @@
 from flask import jsonify
 from flask_restful import abort, Resource
+from sqlalchemy.exc import IntegrityError, NoReferenceError
 from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from database import dbsession  # postgres
@@ -17,8 +18,13 @@ class EndpointEntries(Resource):
         newId = str(uuid.uuid4())  # Create new user id.
         newItem = Entry(
             id=newId, description=args["description"], amount=args["amount"], user_id=args["user_id"])
-        dbsession.add(newItem)
-        dbsession.commit()
+        try:
+            dbsession.add(newItem)
+            dbsession.commit()
+        except IntegrityError as e:
+            print("errori")
+            abort(400, message="Specified user does not exist.")
+
         return {
             "id": newId,
             "description": args["description"],

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base  
 
 base = declarative_base()
-db_string = "postgresql://postgres:postgres@localhost:5432"
+db_string = "postgresql://postgres:postgres@localhost:5555"
 db = create_engine(db_string)
 Session = sessionmaker(db)
 dbsession = Session()

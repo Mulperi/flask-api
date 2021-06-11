@@ -3,7 +3,7 @@
 ## PostgreSQL
 - Install PostgreSQL (https://www.postgresql.org/download/) or with homebrew.
 - Add PostgreSQL to path: `sudo nano /etc/paths` -> /Library/PostgreSQL/13/bin
-- If you need to use global postgres user to login via commandline, use: `sudo -u postgres psql`
+- If you need to use postgres user to login via commandline, use: `sudo -u postgres psql`
 - You can check if Postgres server is running with command: `pg_isready`. Also it will show you the port.
 
 ### PostgreSQL commands:
@@ -66,6 +66,39 @@ for r in result:
 ```
 
 
+## Dockerizing psql
 
-# flask-api
-# flask-api
+Run docker in container:
+`docker run --name mypostgrescontainer -e POSTGRES_PASSWORD=postgres -p 5431:5431 -d postgres`
+
+`docker ps` to see list of running containers, `docker ps -a` to see also stopped ones.
+
+Enter bash of container
+`docker exec -it mypostgrescontainer bash`
+
+Enter psql of container
+`psql -U postgres`
+
+Exit from psql and from container bash (type twice):
+`exit`
+
+Stop container:
+`docker stop mypostgrescontainer`
+
+
+To build new image from Dockerfile
+First create the Dockerfile with content:
+```
+FROM postgres 
+ENV POSTGRES_PASSWORD postgres 
+ENV POSTGRES_DB testdb 
+COPY init.sql /docker-entrypoint-initdb.d/
+```
+
+Then run: `docker build -t mypostgresimage .` and it will create the image.
+
+View all images:
+`docker images -a`
+
+Run the new edited container:
+`docker run --name mypostgrescontainer -p 5555:5432 mypostgresimage`
