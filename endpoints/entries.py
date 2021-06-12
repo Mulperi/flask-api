@@ -22,7 +22,7 @@ class EndpointEntries(Resource):
             dbsession.add(newItem)
             dbsession.commit()
         except IntegrityError as e:
-            print("errori")
+            dbsession.rollback()
             abort(400, message="Specified user does not exist.")
 
         return {
@@ -38,6 +38,17 @@ class EndpointEntry(Resource):
         print(id)
         try:
             entry = dbsession.query(Entry).filter(Entry.id == id).one()
+            return jsonify(entry_schema.dump(entry))
+        except NoResultFound as e:
+            print(e)
+            abort(404, message="Specified entry does not exist.")
+
+
+    def delete(self, id):
+        try:
+            entry = dbsession.query(Entry).filter(Entry.id == id).one()
+            dbsession.delete(entry)
+            dbsession.commit()
             return jsonify(entry_schema.dump(entry))
         except NoResultFound as e:
             print(e)

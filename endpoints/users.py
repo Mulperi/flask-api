@@ -39,3 +39,13 @@ class EndpointUser(Resource):
         except NoResultFound as e:
             print(e)
             abort(404, message="Specified user does not exist.")
+
+    def delete(self, id):
+        try:
+            user = dbsession.query(User).filter(User.id == id).one()
+            dbsession.delete(user)
+            dbsession.commit()
+            return jsonify(user_schema.dump(user))
+        except NoResultFound as e:
+            print(e)
+            abort(404, message="Specified user does not exist.")
